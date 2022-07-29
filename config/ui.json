@@ -1,0 +1,68 @@
+{
+    "player_health_bar": {
+        "relative_size": [10, 3]
+    },
+
+    "enemy_health_bar": {
+        "relative_size": [3, 1]
+    },
+
+    "level_label": {
+        "relative_size": [12.5, 4.4]
+    },
+    
+    "exp_bar": {
+        "relative_size": [12.5, 4.4]
+    },
+
+    "win_label": {
+        "relative_size": [34, 11]
+    },
+    
+    "time_label": {
+        "relative_size": [34, 11]
+    },
+
+    "lose_label": {
+        "relative_size": [34, 11]
+    },
+    
+    "skillpoints_label": {
+        "relative_size": [7.5, 7.8]
+    },
+    "powerup_1": {
+        "relative_size": [4.5, 7.8]
+    },
+    "powerup_2": {
+        "relative_size": [4.5, 7.8]
+    },
+    "powerup_3": {
+        "relative_size": [4.5, 7.8]
+    },
+    "powerup_4": {
+        "relative_size": [4.5, 7.8]
+    },
+    "powerup_5": {
+        "relative_size": [4.5, 7.8]
+    },
+    "powerup_6": {
+        "relative_size": [4.5, 7.8]
+    },
+
+    "fps_label": {
+        "relative_size": [4.5, 7.8]
+    },
+
+    "is_wave_label": {
+        "relative_size": [6.25, 5.5]
+    },
+
+    "wave_counter_label": {
+        "relative_size": [6.25, 5.5]
+    },
+
+    "counter_label": {
+        "relative_size": [6.25, 5.5]
+    }
+
+}

@@ -1,0 +1,16 @@
+{
+    "enemy": {
+        "spawn_speed": 120,
+        "spawn_position": "random"
+    },
+
+    "shooter": {
+        "spawn_speed": 100,
+        "spawn_position": "random"
+    },
+
+    "heal": {
+        "spawn_speed": 1,
+        "spawn_position": "random"
+    }
+}

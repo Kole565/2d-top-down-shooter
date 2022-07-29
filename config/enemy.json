@@ -1,0 +1,45 @@
+{
+    "standart": {
+        "color": [255, 100, 98],
+        "radius": 10,
+    
+        "damage": 0.8,
+        "exp": 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
+        "health": 3,
+        "speed": 250
+    },
+
+    "standart_shooter": {
+        "color": [255, 0, 98],
+        "radius": 12,
+    
+        "damage": 1,
+        "exp": 50,
+        "health": 10,
+        "speed": 100,
+        
+        "shooting": {
+            "damage": 4,
+            "piercing": 0,
+            "projectile_speed": 600,
+            "piercing_damage_mod": 1,
+            "rate": 12,
+            "min_dist": 250,
+    
+            "bg_color": [0,0,0],
+            "color": [255,80,0],
+            "radius": 5,
+            "side": "enemy"            
+        }
+    },
+
+    "standart_cami": {
+        "color": [255, 0, 0],
+        "radius": 6,
+    
+        "damage": 20,
+        "exp": 75,
+        "health": 4,
+        "speed": 450
+    }    
+}

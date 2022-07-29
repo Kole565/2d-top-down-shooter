@@ -1,0 +1,13 @@
+{
+    "spawn_position": "random",
+    "max_active_enemy": 10000,
+    "waves": [
+
+        {
+            "entity": {"standart": 5000},
+            "duration": 0,
+            "break": 0
+        }
+        
+    ]
+}

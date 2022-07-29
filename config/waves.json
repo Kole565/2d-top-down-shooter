@@ -1,0 +1,76 @@
+{
+    "spawn_position": "random",
+    "max_active_enemy": 60,
+    "waves": [
+
+        {
+            "entity": {
+                "standart": 3
+            },
+            "duration": 10,
+            "break": 5
+        },
+        {
+            "entity": {
+                "standart_shooter": 1
+            },
+            "duration": 3,
+            "break": 5
+        },
+        {
+            "entity": {
+                "standart": 5,
+                "standart_shooter": 2
+            },
+            "duration": 3,
+            "break": 5
+        },
+        {
+            "entity": {
+                "standart": 3,
+                "standart_cami": 2
+            },
+            "duration": 3,
+            "break": 5
+        },
+        {
+            "entity": {
+                "standart": 40
+            },
+            "duration": 3,
+            "break": 5
+        },
+        {
+            "entity": {
+                "standart": 10,
+                "standart_shooter": 5,
+                "standart_cami": 1
+            },
+            "duration": 3,
+            "break": 5
+        },
+        {
+            "entity": {
+                "standart_shooter": 25,
+                "standart_cami": 5
+            },
+            "duration": 3,
+            "break": 5
+        },
+        {
+            "entity": {
+                "standart_cami": 20
+            },
+            "duration": 5,
+            "break": 5
+        },
+        {
+            "entity": {
+                "standart": 100
+            },
+            "duration": 3,
+            "break": 5
+        }
+        
+    ]
+}

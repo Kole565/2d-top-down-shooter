@@ -1,0 +1,9 @@
+{
+    "theme": "./Config/theme.json",
+    "screen_size": [1600, 900],
+    "fullscreen": true,
+    "background_color": [167, 255, 100],
+    "framerate": 60,
+    "fps_show": true,
+    "tutorial_show": true
+}

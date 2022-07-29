@@ -1,0 +1,42 @@
+{
+    "fade_intensity": 20,
+    "tutorial": {
+
+        "tutorial_label_1": {
+            "relative_position": [0.3, 3.5],
+            "relative_size": [15.6, 11],
+            "text": "It's a hp bar. When bar is empty - game over. Use skillpoints for upgrade capacity."
+        },
+
+        "tutorial_label_2": {
+            "relative_position": [53.75, 0.5],
+            "relative_size": [12.5, 22],
+            "text": "It's a wave, break timers. Top label show current game cycle state - break or wave run. Second is current wave num. Third - how many time remain for next break, wave."
+        },
+
+        "tutorial_label_3": {
+            "relative_position": [74.7, 0.5],
+            "relative_size": [12.5, 22],
+            "text": "It's a level and exp bars. Every level you get skillpoint that can be used for vary upgrades. Exp needed for next level increase every level."
+        },
+
+        "tutorial_label_4": {
+            "relative_position": [0.3, 80],
+            "relative_size": [30, 11],
+            "text": "It's a upgrades. You can upgrade some characteristic like damage, fire rate, piercing, projectile size, health and speed by using skillpoints. You can see amount of them at left."
+        },
+        
+        "tutorial_label_5": {
+            "relative_position": [43.4, 22.7],
+            "relative_size": [13, 11],
+            "text": "Green circles may appear in the screen - it's heal. They recover your health."
+        },
+
+        "tutorial_box_press_to_start": {
+            "relative_position": [87.2, 88.3],
+            "relative_size": [12.5, 11],
+            "text": "Press escape to start the game."
+        }
+
+    }
+}

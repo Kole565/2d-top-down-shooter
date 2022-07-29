@@ -1,0 +1,41 @@
+{
+    "color": [255, 100, 98],
+    "radius": 10,
+    "over_powered": true,
+
+    "specks": {
+        "health": 100,
+        "speed": 350
+    },
+    "specks_op": {
+        "health": 1000000,
+        "speed": 500
+    },
+    
+    "shooting": {
+        "damage": 1,
+        "piercing": 0,
+        "piercing_damage_mod": 0.5,
+        "projectile_speed": 800,
+        "rate": 15,
+        "knockback": 2,
+    
+        "bg_color": [0,0,0],
+        "color": [255,69,0],
+        "radius": 5,
+        "side": "friendly"
+    },
+    "shooting_op": {
+        "damage": 1000,
+        "piercing": 5000,
+        "piercing_damage_mod": 1,
+        "projectile_speed": 1000,
+        "rate": 500,
+        "knockback": 0,
+    
+        "bg_color": [0,0,0],
+        "color": [255,69,0],
+        "radius": 20,
+        "side": "friendly"
+    }
+}
