@@ -1,7 +1,7 @@
 {
     "color": [255, 100, 98],
     "radius": 10,
-    "over_powered": true,
+    "over_powered": false,
 
     "specks": {
         "health": 100,

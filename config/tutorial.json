@@ -9,7 +9,7 @@
         },
 
         "tutorial_label_2": {
-            "relative_position": [53.75, 0.5],
+            "relative_position": [55, 0.5],
             "relative_size": [12.5, 22],
             "text": "It's a wave, break timers. Top label show current game cycle state - break or wave run. Second is current wave num. Third - how many time remain for next break, wave."
         },

@@ -9,7 +9,7 @@ from .exceptions import *
 
 class UIHandler:
 
-    THEME = "./Config/theme.json"
+    THEME = "./config/theme.json"
     INDENT = 5
 
     def __init__(self, cfg, screen):
@@ -54,6 +54,7 @@ class UIHandler:
                 ]
             else:
                 size = self.cfg[name]["size"]
+            # size = self.cfg[name]["size"]
         except KeyError:
             raise MissingConfigWarning(name)
 

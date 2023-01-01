@@ -130,8 +130,9 @@ class Game:
             if e.type == pygame.QUIT:
                 pygame.quit()
             if self.state == "prestarted":
-                if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
-                    self.tutorial.close()
+                if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE or not self.TUTORIAL_SHOW:
+                    if self.TUTORIAL_SHOW:
+                        self.tutorial.close()
                     self.wave_manager.start()
                     self.state = "running"
                     self.start_time = time.time()

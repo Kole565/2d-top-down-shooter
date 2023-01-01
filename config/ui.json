@@ -28,7 +28,7 @@
     },
     
     "skillpoints_label": {
-        "relative_size": [7.5, 7.8]
+        "relative_size": [10, 7.8]
     },
     "powerup_1": {
         "relative_size": [4.5, 7.8]
@@ -54,15 +54,15 @@
     },
 
     "is_wave_label": {
-        "relative_size": [6.25, 5.5]
+        "relative_size": [8, 5.5]
     },
 
     "wave_counter_label": {
-        "relative_size": [6.25, 5.5]
+        "relative_size": [8, 5.5]
     },
 
     "counter_label": {
-        "relative_size": [6.25, 5.5]
+        "relative_size": [8, 5.5]
     }
 
 }

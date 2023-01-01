@@ -10,7 +10,7 @@ def get_cfg(name):
     return cfg
 
 def get_image(filename):
-    image = pygame.image.load(os.path.join(os.path.dirname(__file__), "../resource", "image", filename))
+    image = pygame.image.load(os.path.join(os.path.dirname(__file__), "../resources", "image", filename))
 
     return image
 
