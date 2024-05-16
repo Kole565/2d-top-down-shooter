@@ -2,16 +2,19 @@ import pygame
 import time
 from pygame_gui.elements import UILabel
 
-from bin.ui_handler import UIHandler
-from bin.wave_manager import WaveManger
+from bin.entity.player import Player
+
+from bin.explosion import Explosion
+from bin.grid_manager import GridManager
+from bin.heal import Heal
+from bin.leveling import Leveling
 from bin.spawner import Spawner
 from bin.tutorial import Tutorial
-from bin.leveling import Leveling
-from bin.entity.player import Player
-from bin.heal import Heal
-from bin.explosion import Explosion
-from bin.utils import *
+from bin.ui_handler import UIHandler
+from bin.wave_manager import WaveManger
+
 from bin.events import *
+from bin.utils import *
 
 
 class Game:
@@ -84,7 +87,7 @@ class Game:
 
     def fill_groups(self):
         self.player = Player(
-            get_cfg("player"), self.ui_handler, self.SCREEN_SIZE,
+            self.groups["player"], get_cfg("player"), self.ui_handler, self.SCREEN_SIZE,
             spawn_pos=(self.SCREEN_SIZE[0] / 2, self.SCREEN_SIZE[1] / 2)
         )
         specks = {
@@ -104,10 +107,15 @@ class Game:
             group=self.groups["enemy"], ui_handler=self.ui_handler,
             leveling=self.leveling, field_size=self.SCREEN_SIZE, player=self.player
         )
+        self.grid_manager = GridManager(
+            cfg=get_cfg("grid"),
+            group=self.groups["player"], ui_handler=self.ui_handler,
+            field_size=self.SCREEN_SIZE, player=self.player
+        )
 
         self.groups["player"].add(self.player)
         self.groups["other"].extend([
-            heal_spawner, self.wave_manager, self.leveling
+            heal_spawner, self.wave_manager, self.leveling, self.grid_manager
         ])
 
     def update(self):

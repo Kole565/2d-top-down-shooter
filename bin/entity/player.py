@@ -12,8 +12,10 @@ from ..events import PLAYER_LOSE
 
 class Player(pygame.sprite.Sprite, AnimateObject):
 
-    def __init__(self, cfg, ui_handler, field_size, spawn_pos=[0, 0]):
+    def __init__(self, collisionable, cfg, ui_handler, field_size, spawn_pos=[0, 0]):
         super().__init__()
+
+        self.collisionable = collisionable
 
         self.ui_handler = ui_handler
         self.field_size = field_size
@@ -68,9 +70,6 @@ class Player(pygame.sprite.Sprite, AnimateObject):
         if keys[pygame.K_SPACE]:
             self.shoot(groups)
 
-    def move_knockback(self, rel_x, rel_y):
-        self.move_struct(rel_x, rel_y, mod=self.knockback)
-
     def shoot(self, groups):
         if not self.can_shoot():
             return
@@ -86,6 +85,7 @@ class Player(pygame.sprite.Sprite, AnimateObject):
         projectile.add(groups["projectile"])
 
     def get_shoot_direction(self):
+        # TODO: Use math normalisation here
         aim = pygame.mouse.get_pos()
 
         delta_x = aim[0] - self.rect.centerx
@@ -134,7 +134,7 @@ class Player(pygame.sprite.Sprite, AnimateObject):
             self.current_health += hp
 
     def heal_percent(self, perc):
-        self.heal(self.health_capacity*perc/100)
+        self.heal(self.health_capacity * perc / 100)
 
     def kill(self):
         pygame.event.post(PLAYER_LOSE)
