@@ -1,5 +1,4 @@
 import pygame
-import random
 
 
 class Explosion(pygame.sprite.Sprite):
@@ -13,9 +12,9 @@ class Explosion(pygame.sprite.Sprite):
 
         self.image = self.images[0]
         self.rect = self.image.get_rect(center=actor.rect.center)
-        
+
         self.life = self.defautl_life
-    
+
     def update(self, *args, **kwargs):
         self.life -= 1
         self.image = self.images[self.life // self.anim_len % 2]

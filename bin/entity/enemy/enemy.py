@@ -1,6 +1,5 @@
 import pygame
 from pygame_gui.elements import UIWorldSpaceHealthBar
-import math
 
 from ..animate_object import AnimateObject
 
@@ -13,7 +12,7 @@ class Enemy(pygame.sprite.Sprite, AnimateObject):
         super().__init__()
 
         self.radius = cfg["radius"]
-        self.image = pygame.Surface([self.radius*2, self.radius*2])
+        self.image = pygame.Surface([self.radius * 2, self.radius * 2])
         self.image.fill([0, 0, 0])
         self.image.set_colorkey([0, 0, 0])
         self.rect = self.image.get_rect()
@@ -34,29 +33,29 @@ class Enemy(pygame.sprite.Sprite, AnimateObject):
             "enemy_health_bar", UIWorldSpaceHealthBar, None,
             sprite_to_monitor=self
         )
-        self.health_bar.follow_sprite_offset = -cfg["radius"]*1.5, -cfg["radius"]*2
+        self.health_bar.follow_sprite_offset = -cfg["radius"] * 1.5, -cfg["radius"] * 2
 
         self.x, self.y = spawn_pos
         self.aim = player
-    
+
     def update(self, *args, **kwargs):
         self.moving(kwargs["time_delta"])
         self.check_collision(kwargs["groups"])
-    
+
     def moving(self, time_delta):
         direction = self.get_direction(self.aim)
 
         self.move(*self.direction, time_delta=time_delta)
-    
+
     def check_collision(self, *args, **kwargs):
         collision = pygame.sprite.collide_circle(self, self.aim)
         if collision:
             self.aim.hit(self.damage)
-    
+
     def get_direction(self, aim):
         delta_x = aim.rect.x - self.rect.x
         delta_y = aim.rect.y - self.rect.y
-        
+
         if delta_x == delta_y == 0:
             x = y = 0
 
@@ -85,7 +84,7 @@ class Enemy(pygame.sprite.Sprite, AnimateObject):
 
         if self.current_health <= 0:
             self.kill()
-    
+
     def kill(self):
         self.score.add(self.exp)
         self.health_bar.kill()

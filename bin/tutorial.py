@@ -16,7 +16,7 @@ class Tutorial:
         self.controller = controller
 
         self.init_labels()
-    
+
     def init_labels(self):
         self.labels = pygame.sprite.Group()
         for name in self.tutorial:
@@ -32,7 +32,7 @@ class Tutorial:
         self.screen.blit(image, (0, 0))
 
         self.labels.draw(self.screen)
-    
+
     def close(self):
         self.controller.paused = False
         self.ui_handler.remove(*list(self.tutorial.keys()))

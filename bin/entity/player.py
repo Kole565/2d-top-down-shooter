@@ -1,5 +1,4 @@
 import pygame
-import pygame_gui
 from pygame_gui.elements import UIScreenSpaceHealthBar
 import time
 
@@ -20,7 +19,7 @@ class Player(pygame.sprite.Sprite, AnimateObject):
         self.field_size = field_size
 
         self.radius = cfg["radius"]
-        self.image = pygame.Surface([cfg["radius"]*2, cfg["radius"]*2])
+        self.image = pygame.Surface([cfg["radius"] * 2, cfg["radius"] * 2])
         self.image.fill([0, 0, 0])
         self.image.set_colorkey([0, 0, 0])
         self.rect = self.image.get_rect()
@@ -42,13 +41,15 @@ class Player(pygame.sprite.Sprite, AnimateObject):
         self.last_shoot = time.time() - 1000
 
         self.move(0, 0)
-    
+
     @property
     def speed(self):
         return self.specks["speed"]
+
     @property
     def health_capacity(self):
         return self.specks["health"]
+
     @property
     def shooting_rate(self):
         return self.shooting["rate"]
@@ -63,13 +64,13 @@ class Player(pygame.sprite.Sprite, AnimateObject):
             self.move_struct(-1, 0, time_delta=kwargs["time_delta"])
         if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
             self.move_struct(1, 0, time_delta=kwargs["time_delta"])
-        
+
         if keys[pygame.K_SPACE]:
             self.shoot(groups)
-    
+
     def move_knockback(self, rel_x, rel_y):
         self.move_struct(rel_x, rel_y, mod=self.knockback)
-    
+
     def shoot(self, groups):
         if not self.can_shoot():
             return
@@ -82,18 +83,15 @@ class Player(pygame.sprite.Sprite, AnimateObject):
             [self.x - self.shooting["radius"] + self.radius, self.y - self.shooting["radius"] + self.radius]
         )
 
-        # self.move_knockback(-direction[0], -direction[1])
-
         projectile.add(groups["projectile"])
-    
+
     def get_shoot_direction(self):
         aim = pygame.mouse.get_pos()
 
         delta_x = aim[0] - self.rect.centerx
         delta_y = aim[1] - self.rect.centery
-        
-        if delta_x ==  delta_y == 0:
-            # Projectile just levitate at place so, we need to use default direction.
+
+        if delta_x == delta_y == 0:
             x = y = 1
 
         elif delta_x == 0:
@@ -115,7 +113,7 @@ class Player(pygame.sprite.Sprite, AnimateObject):
     def can_shoot(self):
         if self.shooting_rate == 0:
             return
-        if time.time() > self.last_shoot + 10/self.shooting_rate:
+        if time.time() > self.last_shoot + 10 / self.shooting_rate:
             self.last_shoot = time.time()
             return True
 
@@ -125,7 +123,7 @@ class Player(pygame.sprite.Sprite, AnimateObject):
             self.kill()
         else:
             self.current_health -= dmg
-    
+
     def heal(self, hp):
         if self.current_health == self.health_capacity:
             raise FullHealth
@@ -134,10 +132,10 @@ class Player(pygame.sprite.Sprite, AnimateObject):
             self.current_health = self.health_capacity
         else:
             self.current_health += hp
-    
+
     def heal_percent(self, perc):
         self.heal(self.health_capacity*perc/100)
-    
+
     def kill(self):
         pygame.event.post(PLAYER_LOSE)
         super().kill()

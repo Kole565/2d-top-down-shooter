@@ -16,4 +16,5 @@ class CamiEnemy(Enemy):
 
         e = Explosion(self)
         groups["enemy"].add(e)
+
         self.kill()

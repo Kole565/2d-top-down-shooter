@@ -17,7 +17,7 @@ from bin.events import *
 class Game:
 
     """2d top-down shooter game class. Very vaguely simular to Enter The Gungeon.
-    
+
     For game operating used 'state' field with possible values as:
     prestarted - Before main game start. There can be instructions, story, boosts, etc.
     Not menu or other separated scenes for 'prestarted' state! It's only for game session prestart.
@@ -35,7 +35,7 @@ class Game:
     Notes: Game class work only at current machine - not enought resources(no fonts).
     Also ui not work correctly at other resolution.
     There also some problems with balance. (High difficult)
-    
+
     """
 
     def __init__(self):
@@ -72,20 +72,20 @@ class Game:
             self.tutorial = Tutorial(get_cfg("tutorial"), self.screen, self.ui_handler, self)
 
         self.state = "prestarted"
-        
+
     def start(self):
         """Initiate game objects and launch main cycle."""
         self.fill_groups()
-        
+
         while True:
-            self.time_delta = self.clock.tick(self.FRAMERATE)/1000
+            self.time_delta = self.clock.tick(self.FRAMERATE) / 1000
             self.update()
             self.draw()
-            
+
     def fill_groups(self):
         self.player = Player(
             get_cfg("player"), self.ui_handler, self.SCREEN_SIZE,
-            spawn_pos=(self.SCREEN_SIZE[0]/2, self.SCREEN_SIZE[1]/2)
+            spawn_pos=(self.SCREEN_SIZE[0] / 2, self.SCREEN_SIZE[1] / 2)
         )
         specks = {
             "player": self.player.specks,
@@ -109,7 +109,7 @@ class Game:
         self.groups["other"].extend([
             heal_spawner, self.wave_manager, self.leveling
         ])
-            
+
     def update(self):
         self.update_events()
         self.update_groups()
@@ -144,9 +144,9 @@ class Game:
             elif self.state == "end":
                 if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
                     self.restart()
-            
+
             self.ui_handler.process_events(e)
-    
+
     def update_groups(self):
         """Trying to update groups, if fails update every element separately."""
         if self.state in ("prestarted", "lose", "paused", "end"):
@@ -158,7 +158,7 @@ class Game:
             except AttributeError:
                 for updateable in group:
                     updateable.update(groups=self.groups, time_delta=self.time_delta)
-    
+
     def draw(self):
         """Draw sprites groups, if fails draw every element separately, if fails pass."""
         self.screen.fill(self.BACKGROUND_COLOR)
@@ -173,16 +173,16 @@ class Game:
                 service_obj.draw(self.screen)
             except AttributeError:
                 pass
-            
+
         self.ui_handler.draw()
 
         pygame.display.update()
-    
+
     def win_check(self):
         """Create win-lose ui if neccesary."""
         if self.state not in ("win", "lose"):
             return
-        
+
         if self.state == "win":
             self.win_label = self.ui_handler.add(
                 "win_label", UILabel, ["center"],
@@ -200,10 +200,10 @@ class Game:
             )
 
         self.state = "end"
-    
+
     def restart(self):
         """Not Implemented
-        # Use smth like SessionsManager and rename Game to Session?
+        # TODO: For records use smth like SessionsManager and rename Game to Session?
         """
         self = Game()
         self.start()

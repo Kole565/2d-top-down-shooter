@@ -1,5 +1,5 @@
 import pygame
-from pygame_gui.elements import UIProgressBar, UILabel, UIPanel
+from pygame_gui.elements import UIProgressBar, UILabel
 
 from .powerup import Powerup, PowerupInfo
 from .utils import get_cfg
@@ -7,10 +7,10 @@ from .exceptions import *
 
 
 class Leveling:
-    
+
     def __init__(self, screen, ui_handler, specks):
         self.specks = specks
-        
+
         self.exp = 0
         self.level = 1
         self.next_level_exp = 25
@@ -26,7 +26,7 @@ class Leveling:
             "skillpoints_label", UILabel, ["bottom", "left"],
             text="{:2} skillpoints".format(self.skillpoints), class_id="@default_label"
         )
-    
+
         self.powerups = [
             Powerup(
                 get_cfg("ui")["powerup_1"], "powerup_1", ui_handler,
@@ -62,28 +62,28 @@ class Leveling:
 
     def update(self, *args, **kwargs):
         self.powerups_update(*args, **kwargs)
-    
+
     def powerups_update(self, *args, **kwargs):
         for powerup in self.powerups:
             powerup.update(*args, **kwargs)
-    
+
     def enought_skillpoints_check(self):
         if self.skillpoints >= 1:
             return True
-    
+
     def dec_skillpoint(self):
         if self.skillpoints < 1:
             raise NotEnoughtSkillpointsError
 
         self.skillpoints -= 1
         self.ui_update()
-    
+
     def add(self, exp):
         self.exp += exp
         while self.exp >= self.next_level_exp:
             self.exp -= self.next_level_exp
             self.level_up()
-        
+
         self.exp_bar.set_current_progress(self.exp / self.next_level_exp * 100)
 
     def level_up(self):
@@ -93,7 +93,7 @@ class Leveling:
 
         self.exp_bar.set_current_progress(0)
         self.ui_update()
-    
+
     def ui_update(self):
         self.level_label.set_text("{:2} level".format(self.level))
         self.skillpoints_label.set_text("{:2} skillpoints".format(self.skillpoints))

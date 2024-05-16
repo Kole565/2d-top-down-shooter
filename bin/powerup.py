@@ -1,7 +1,6 @@
 import pygame
-from pygame_gui.elements import UIImage, UIButton
+from pygame_gui.elements import UIButton
 
-from .events import powerup_button_click
 from .exceptions import NotEnoughtSkillpointsError
 
 
@@ -14,6 +13,7 @@ class PowerupInfo:
         self.speck_name = name
         self.value = value
         self.type = type
+
 
 class Powerup:
 
@@ -34,13 +34,13 @@ class Powerup:
         self.type = specks.type
 
         self.leveling = leveling
-    
+
     def update(self, *args, **kwargs):
         self.button.update(kwargs["time_delta"])
 
         if not self.check() or not self.leveling.enought_skillpoints_check():
             return
-        
+
         {
             "+": lambda: self.specks[self.speck_parent].add(self.speck_name, self.value),
             "-": lambda: self.specks[self.speck_parent].add(self.speck_name, -self.value),
@@ -57,5 +57,3 @@ class Powerup:
         keys = pygame.key.get_pressed()
         if keys[self.key] or self.button.check_pressed():
             return True
-    
-    
