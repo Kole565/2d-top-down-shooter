@@ -2,20 +2,19 @@ import pygame
 from pygame_gui.elements import UIScreenSpaceHealthBar
 import time
 
-from .animate_object import AnimateObject
+from bin.modules.moveable import Moveable
+from bin.modules.collisionable import Collisionable
 from .bullet import Bullet
 
 from ..specks import Specks
-from ..exceptions import *
 from ..events import PLAYER_LOSE
 
 
-class Player(pygame.sprite.Sprite, AnimateObject):
+class Player(pygame.sprite.Sprite, Moveable, Collisionable):
 
-    def __init__(self, collisionable, cfg, ui_handler, field_size, spawn_pos=[0, 0]):
+    def __init__(self, cfg, ui_handler, field_size, spawn_pos=[0, 0]):
         super().__init__()
-
-        self.collisionable = collisionable
+        Moveable.init(self, spawn_pos)
 
         self.ui_handler = ui_handler
         self.field_size = field_size
@@ -26,6 +25,8 @@ class Player(pygame.sprite.Sprite, AnimateObject):
         self.image.set_colorkey([0, 0, 0])
         self.rect = self.image.get_rect()
         pygame.draw.circle(self.image, cfg["color"], [cfg["radius"], cfg["radius"]], cfg["radius"])
+
+        self.mask = pygame.mask.from_surface(self.image)
 
         op = cfg["over_powered"]
         self.specks = Specks(cfg["specks_op"]) if op else Specks(cfg["specks"])
@@ -40,9 +41,13 @@ class Player(pygame.sprite.Sprite, AnimateObject):
         )
 
         self.x, self.y = spawn_pos
+        self.positions = [spawn_pos]
+        self.can_move = {"x": True, "-x": True, "y": True, "-y": True}
         self.last_shoot = time.time() - 1000
 
         self.move(0, 0)
+
+        self.group = "player"
 
     @property
     def speed(self):
@@ -57,14 +62,16 @@ class Player(pygame.sprite.Sprite, AnimateObject):
         return self.shooting["rate"]
 
     def update(self, groups, *args, **kwargs):
+        self.positions.append([self.x, self.y])
+
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_w] or keys[pygame.K_UP]:
+        if (keys[pygame.K_w] or keys[pygame.K_UP]) and (self.can_move["-y"]):
             self.move_struct(0, -1, time_delta=kwargs["time_delta"])
-        if keys[pygame.K_s] or keys[pygame.K_DOWN]:
+        if (keys[pygame.K_s] or keys[pygame.K_DOWN]) and (self.can_move["y"]):
             self.move_struct(0, 1, time_delta=kwargs["time_delta"])
-        if keys[pygame.K_a] or keys[pygame.K_LEFT]:
+        if (keys[pygame.K_a] or keys[pygame.K_LEFT]) and (self.can_move["-x"]):
             self.move_struct(-1, 0, time_delta=kwargs["time_delta"])
-        if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
+        if (keys[pygame.K_d] or keys[pygame.K_RIGHT]) and (self.can_move["x"]):
             self.move_struct(1, 0, time_delta=kwargs["time_delta"])
 
         if keys[pygame.K_SPACE]:
@@ -81,6 +88,7 @@ class Player(pygame.sprite.Sprite, AnimateObject):
             direction,
             [self.x - self.shooting["radius"] + self.radius, self.y - self.shooting["radius"] + self.radius]
         )
+        projectile.group = "player_projectile"
 
         projectile.add(groups["projectile"])
 
@@ -125,13 +133,9 @@ class Player(pygame.sprite.Sprite, AnimateObject):
             self.current_health -= dmg
 
     def heal(self, hp):
-        if self.current_health == self.health_capacity:
-            raise FullHealth
-
-        if self.current_health + hp > self.health_capacity:
+        self.current_health += hp
+        if self.current_health > self.health_capacity:
             self.current_health = self.health_capacity
-        else:
-            self.current_health += hp
 
     def heal_percent(self, perc):
         self.heal(self.health_capacity * perc / 100)
@@ -139,3 +143,15 @@ class Player(pygame.sprite.Sprite, AnimateObject):
     def kill(self):
         pygame.event.post(PLAYER_LOSE)
         super().kill()
+
+    def on_collision(self, collisions):
+        for sprite in collisions:
+            if sprite.group == "enemy":
+                self.hit(1)
+
+            elif sprite.group == "pickup":
+                self.heal(sprite.hitpoints)
+                sprite.kill()
+
+            elif sprite.group == "obstacle":
+                self.x, self.y = self.positions[-2]

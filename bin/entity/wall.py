@@ -10,14 +10,10 @@ class Wall(pygame.sprite.Sprite):
         self.image.fill([0, 0, 0])
         self.image.set_colorkey([0, 0, 0])
         self.rect = self.image.get_rect()
+        pygame.draw.rect(self.image, cfg["color"], self.rect)
 
-        pygame.draw.rect(self.image, cfg["color"], [0, 0, cfg["size"], cfg["size"]])
+        self.mask = pygame.mask.from_surface(self.image)
 
-        self.side = "neutral"
+        self.group = "obstacle"
 
-        self.x, self.y = spawn_pos
-        self.rect.x = self.x
-        self.rect.y = self.y
-
-    def update(self, *args, **kwargs):
-        pass
+        self.rect.x, self.rect.y = spawn_pos

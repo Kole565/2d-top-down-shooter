@@ -1,7 +1,14 @@
-class AnimateObject:
+class Moveable:
+
+    @staticmethod
+    def init(self, spawn_pos):
+        self.x, self.y = spawn_pos
+        self.last_pos = spawn_pos
 
     def move(self, rel_x, rel_y, mod=None, time_delta=1):
         """Change obj coordinate by float variables for bigger preciosness."""
+        self.last_pos = [self.x, self.y]
+
         mult = self.speed if mod is None else mod
         self.x += rel_x * mult * time_delta
         self.y += rel_y * mult * time_delta
@@ -21,3 +28,6 @@ class AnimateObject:
             return
 
         self.move(rel_x, rel_y, mod, time_delta=time_delta)
+
+    def revert_pos(self):
+        self.x, self.y = self.last_pos

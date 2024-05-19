@@ -4,6 +4,7 @@ from pygame_gui.elements import UILabel
 
 from bin.entity.player import Player
 
+from bin.collision_manager import CollisionManager
 from bin.explosion import Explosion
 from bin.grid_manager import GridManager
 from bin.heal import Heal
@@ -63,10 +64,11 @@ class Game:
         self.ui_handler = UIHandler(get_cfg("ui"), self.screen)
         self.clock = pygame.time.Clock()
         self.groups = {
-            "player": pygame.sprite.RenderUpdates(),
-            "enemy": pygame.sprite.RenderUpdates(),
-            "projectile": pygame.sprite.RenderUpdates(),
-            "pickup": pygame.sprite.RenderUpdates(),
+            "player": pygame.sprite.Group(),
+            "enemy": pygame.sprite.Group(),
+            "projectile": pygame.sprite.Group(),
+            "pickup": pygame.sprite.Group(),
+            "obstacles": pygame.sprite.Group(),
             "other": [],
         }
         if self.FPS_SHOW:
@@ -87,7 +89,7 @@ class Game:
 
     def fill_groups(self):
         self.player = Player(
-            self.groups["player"], get_cfg("player"), self.ui_handler, self.SCREEN_SIZE,
+            get_cfg("player"), self.ui_handler, self.SCREEN_SIZE,
             spawn_pos=(self.SCREEN_SIZE[0] / 2, self.SCREEN_SIZE[1] / 2)
         )
         specks = {
@@ -109,13 +111,18 @@ class Game:
         )
         self.grid_manager = GridManager(
             cfg=get_cfg("grid"),
-            group=self.groups["player"], ui_handler=self.ui_handler,
+            group=self.groups["obstacles"], ui_handler=self.ui_handler,
             field_size=self.SCREEN_SIZE, player=self.player
         )
 
         self.groups["player"].add(self.player)
+        self.collision_manager = CollisionManager({
+            self.groups["player"]: [self.groups["enemy"], self.groups["pickup"], self.groups["obstacles"]],
+            self.groups["enemy"]: [self.groups["obstacles"]],
+            self.groups["projectile"]: [self.groups["player"], self.groups["enemy"], self.groups["obstacles"]]
+        })
         self.groups["other"].extend([
-            heal_spawner, self.wave_manager, self.leveling, self.grid_manager
+            heal_spawner, self.wave_manager, self.leveling, self.collision_manager, self.grid_manager
         ])
 
     def update(self):

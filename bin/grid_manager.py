@@ -39,12 +39,11 @@ class GridManager:
                     self.grid[y][x][1] * self.wall_size
                 ]
 
-                wall = Wall(
-                    self.wall_cfg, spawn_position
-                )
+                wall = Wall(self.wall_cfg, spawn_position)
 
-                self.grid[y][x][2] = wall
                 self.group.add(wall)
+                self.grid[y][x][2] = wall
+                # print(self.group)
 
     def update(self, *args, **kwargs):
         pass

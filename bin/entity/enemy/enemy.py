@@ -1,15 +1,16 @@
 import pygame
 from pygame_gui.elements import UIWorldSpaceHealthBar
 
-from ..animate_object import AnimateObject
+from bin.modules.moveable import Moveable
 
 
-class Enemy(pygame.sprite.Sprite, AnimateObject):
+class Enemy(pygame.sprite.Sprite, Moveable):
 
     aim_group = "player"
 
     def __init__(self, cfg, ui_handler, score, field_size, player, spawn_pos=[0, 0]):
         super().__init__()
+        Moveable.init(self, spawn_pos)
 
         self.radius = cfg["radius"]
         self.image = pygame.Surface([self.radius * 2, self.radius * 2])
@@ -23,7 +24,7 @@ class Enemy(pygame.sprite.Sprite, AnimateObject):
         self.exp = cfg["exp"]
         self.current_health = cfg["health"]
         self.health_capacity = cfg["health"]
-        self.side = "enemy"
+        self.group = "enemy"
 
         self.ui_handler = ui_handler
         self.score = score
@@ -36,21 +37,16 @@ class Enemy(pygame.sprite.Sprite, AnimateObject):
         self.health_bar.follow_sprite_offset = -cfg["radius"] * 1.5, -cfg["radius"] * 2
 
         self.x, self.y = spawn_pos
+        self.last_pos = spawn_pos
         self.aim = player
 
     def update(self, *args, **kwargs):
         self.moving(kwargs["time_delta"])
-        self.check_collision(kwargs["groups"])
 
     def moving(self, time_delta):
         direction = self.get_direction(self.aim)
 
         self.move(*self.direction, time_delta=time_delta)
-
-    def check_collision(self, *args, **kwargs):
-        collision = pygame.sprite.collide_circle(self, self.aim)
-        if collision:
-            self.aim.hit(self.damage)
 
     def get_direction(self, aim):
         delta_x = aim.rect.x - self.rect.x
@@ -89,3 +85,8 @@ class Enemy(pygame.sprite.Sprite, AnimateObject):
         self.score.add(self.exp)
         self.health_bar.kill()
         super().kill()
+
+    def on_collision(self, collisions):
+        for sprite in collisions:
+            if sprite.group == "obstacle":
+                self.revert_pos()
