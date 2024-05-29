@@ -1,5 +1,4 @@
 import time
-import math
 
 from .enemy import Enemy
 
@@ -11,6 +10,8 @@ class Shooter(Enemy):
     def __init__(self, cfg, *args, **kwargs):
         super().__init__(cfg, *args, **kwargs)
 
+        self.bullets_group = kwargs["bullets_group"]
+
         self.shooting_cfg = cfg["shooting"]
         self.min_dist = self.shooting_cfg["min_dist"]
         self.last_shoot = time.time() - 1000
@@ -18,17 +19,13 @@ class Shooter(Enemy):
     def update(self, *args, **kwargs):
         super().update(*args, **kwargs)
 
-        self.shooting(kwargs["groups"])
+        self.shooting()
 
-    def moving(self, time_delta):
-        if math.dist((self.x, self.y), (self.aim.x, self.aim.y)) > self.min_dist:
-            super().moving(time_delta)
+    def shooting(self):
+        direction = self.get_direction([self.aim.x, self.aim.y])
+        self.shoot(direction)
 
-    def shooting(self, groups):
-        direction = self.get_direction(self.aim)
-        self.shoot(direction, groups["projectile"])
-
-    def shoot(self, direction, group):
+    def shoot(self, direction):
         if not self.can_shoot():
             return
 
@@ -39,7 +36,7 @@ class Shooter(Enemy):
             [self.x + self.radius / 2, self.y + self.radius / 2]
         )
 
-        group.add(projectile)
+        self.bullets_group.add(projectile)
 
     def can_shoot(self):
         if self.shooting_cfg["rate"] == 0:

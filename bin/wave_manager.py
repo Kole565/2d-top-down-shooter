@@ -13,12 +13,15 @@ from .events import *
 class WaveManger:
     """Implement waves system - 'enemy' attack during wave, break between waves for upgrading player."""
 
-    def __init__(self, cfg, group, ui_handler, leveling, field_size, player):
-        self.group = group
+    def __init__(self, cfg, enemy_group, markers_group, bullets_group, ui_handler, leveling, field_size, player, obstacles_manager):
+        self.enemy_group = enemy_group
+        self.markers_group = markers_group
+        self.bullets_group = bullets_group
         self.ui_handler = ui_handler
         self.leveling = leveling
         self.field_size = field_size
         self.player = player
+        self.obstacles_manager = obstacles_manager
 
         self.waves = cfg["waves"]
         if cfg["spawn_position"] == "random":
@@ -66,13 +69,15 @@ class WaveManger:
         self.spawning()
         if not self.is_active:
             return
-
+        # print("1. Before check wave")
         self.check_wave()
+        # print("2. After check wave")
         try:
             before_wave = self.waves[self.wave_ind]["duration"] - time.time() + self.last_wave_time
             before_break = self.waves[self.wave_ind]["break"] - time.time() + self.last_break_time
         except IndexError:
             return
+        # print("3. After exceptions")
 
         before_wave = 0 if before_wave < 0 else before_wave
         before_break = 0 if before_break < 0 else before_break
@@ -81,6 +86,7 @@ class WaveManger:
         self.counter.set_text(
             "Remain: {:.0f} s".format(before_wave if self.is_wave else before_break)
         )
+        # print("4. After ui update")
 
     def check_wave(self):
         try:
@@ -96,7 +102,7 @@ class WaveManger:
             self.is_wave = True
             self.start_wave()
 
-        elif self.is_wave and time.time() > self.last_wave_time + wave["duration"] and not self.group:
+        elif self.is_wave and time.time() > self.last_wave_time + wave["duration"] and not self.enemy_group:
             # Wave ended, break started case
             self.last_break_time = time.time()
             self.is_wave = False
@@ -116,22 +122,28 @@ class WaveManger:
         Post event when waves and enemies in them end.
         Use queue for delayed spawn.
         """
-        if not self.queue or len(self.group) > self.max_active_enemy:
-            if self.last_wave and not len(self.group):
+
+        if not self.queue or len(self.enemy_group) > self.max_active_enemy:
+            if self.last_wave and not len(self.enemy_group):
                 pygame.event.post(WAVES_ENDED)
             return
-
-        while self.queue and len(self.group) <= self.max_active_enemy:
+        print("queue: {}, enemy_group: {}".format(self.queue, self.enemy_group))
+        print("Condition: {}".format(self.queue and len(self.enemy_group) <= self.max_active_enemy))
+        while self.queue and len(self.enemy_group) <= self.max_active_enemy:
             if not self.queue[0][-1]:
                 self.queue.pop(0)
                 continue
+            print("Spawn")
             self.spawn(*self.queue[0])
             self.queue[0][-1] -= 1
 
     def spawn(self, obj_class, obj_cfg, amount=None):
+        print("0. Enemy spawn")
         instance = obj_class(
-            obj_cfg, self.ui_handler, self.leveling, self.field_size,
-            self.player, self.spawn_position()
+            obj_cfg, self.markers_group, self.ui_handler, self.leveling, self.field_size, self.obstacles_manager,
+            self.player, self.spawn_position(), bullets_group=self.bullets_group
         )
 
-        self.group.add(instance)
+        print("1. Enemy spawn")
+        self.enemy_group.add(instance)
+        print("2. Enemy spawn")

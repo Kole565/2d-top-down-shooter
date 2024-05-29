@@ -2,19 +2,21 @@ import pygame
 
 from bin.modules.moveable import Moveable
 
-from ..explosion import Explosion
-
 
 class Bullet(pygame.sprite.Sprite, Moveable):
 
     def __init__(self, cfg, field_size, direction, spawn_pos=[0, 0]):
         super().__init__()
+        Moveable.init(self, spawn_pos)
 
-        self.image = pygame.Surface([cfg["radius"]*2, cfg["radius"]*2])
+        self.image = pygame.Surface([cfg["radius"] * 2, cfg["radius"] * 2])
         self.image.fill([0, 0, 0])
         self.image.set_colorkey([0, 0, 0])
         self.rect = self.image.get_rect()
-        pygame.draw.circle(self.image, cfg["color"], [cfg["radius"], cfg["radius"]], cfg["radius"])
+        pygame.draw.circle(
+            self.image, cfg["color"], [cfg["radius"], cfg["radius"]],
+            cfg["radius"]
+        )
 
         self.damage = cfg["damage"]
         self.piercing = cfg["piercing"]
@@ -26,14 +28,12 @@ class Bullet(pygame.sprite.Sprite, Moveable):
         self.field_size = field_size
         self.direction = direction
 
-        self.x, self.y = spawn_pos
         self.collided_sprites = []
 
         self.group = "projectile"
 
-    def update(self, groups, *args, **kwargs):
+    def update(self, *args, **kwargs):
         self.move(*self.direction, time_delta=kwargs["time_delta"])
-        # self.check_collision(groups)
         self.check_bounds()
 
     def on_collision(self, collisions):

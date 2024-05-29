@@ -7,10 +7,13 @@ class CollisionManager:
         self.groups = groups
 
     def update(self, *args, **kwargs):
-        for group_first in self.groups:
-            groups_union = pygame.sprite.Group([sprites for sprites in self.groups[group_first]])
-            collisions_dict = pygame.sprite.groupcollide(group_first, groups_union, False, False)
-
+        for first_groups in self.groups:
+            groups_union = pygame.sprite.Group(
+                [sprites for sprites in self.groups[first_groups]]
+            )
+            collisions_dict = pygame.sprite.groupcollide(
+                first_groups, groups_union, False, False
+            )
             if not collisions_dict:
                 continue
 

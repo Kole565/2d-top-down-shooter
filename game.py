@@ -6,7 +6,7 @@ from bin.entity.player import Player
 
 from bin.collision_manager import CollisionManager
 from bin.explosion import Explosion
-from bin.grid_manager import GridManager
+from bin.obstacles_manager import ObstaclesManager
 from bin.heal import Heal
 from bin.leveling import Leveling
 from bin.spawner import Spawner
@@ -36,7 +36,6 @@ class Game:
     waves - Set up some new waves, if want.
     P.S. set to true field 'over_powered' in player config for easy walkthrough.
 
-    Notes: Game class work only at current machine - not enought resources(no fonts).
     Also ui not work correctly at other resolution.
     There also some problems with balance. (High difficult)
 
@@ -64,11 +63,11 @@ class Game:
         self.ui_handler = UIHandler(get_cfg("ui"), self.screen)
         self.clock = pygame.time.Clock()
         self.groups = {
+            "obstacles": pygame.sprite.Group(),
             "player": pygame.sprite.Group(),
             "enemy": pygame.sprite.Group(),
             "projectile": pygame.sprite.Group(),
             "pickup": pygame.sprite.Group(),
-            "obstacles": pygame.sprite.Group(),
             "other": [],
         }
         if self.FPS_SHOW:
@@ -89,7 +88,8 @@ class Game:
 
     def fill_groups(self):
         self.player = Player(
-            get_cfg("player"), self.ui_handler, self.SCREEN_SIZE,
+            get_cfg("player"), self.groups["projectile"], self.ui_handler,
+            self.SCREEN_SIZE,
             spawn_pos=(self.SCREEN_SIZE[0] / 2, self.SCREEN_SIZE[1] / 2)
         )
         specks = {
@@ -102,27 +102,35 @@ class Game:
         heal_spawner = Spawner(
             cfg=get_cfg("spawners")["heal"], obj_cfg=get_cfg("heal"),
             obj_class=Heal, group=self.groups["pickup"],
-            ui_handler=self.ui_handler, score=self.leveling, limits=self.SCREEN_SIZE
+            ui_handler=self.ui_handler, score=self.leveling,
+            limits=self.SCREEN_SIZE
+        )
+        self.obstacles_manager = ObstaclesManager(
+            cfg=get_cfg("grid"),
+            obstacles_group=self.groups["obstacles"],
+            field_size=self.SCREEN_SIZE
         )
         self.wave_manager = WaveManger(
             cfg=get_cfg("waves"),
-            group=self.groups["enemy"], ui_handler=self.ui_handler,
-            leveling=self.leveling, field_size=self.SCREEN_SIZE, player=self.player
-        )
-        self.grid_manager = GridManager(
-            cfg=get_cfg("grid"),
-            group=self.groups["obstacles"], ui_handler=self.ui_handler,
-            field_size=self.SCREEN_SIZE, player=self.player
+            enemy_group=self.groups["enemy"], markers_group=self.groups["obstacles"], bullets_group=self.groups["projectile"], ui_handler=self.ui_handler,
+            leveling=self.leveling, field_size=self.SCREEN_SIZE,
+            player=self.player, obstacles_manager=self.obstacles_manager
         )
 
         self.groups["player"].add(self.player)
         self.collision_manager = CollisionManager({
-            self.groups["player"]: [self.groups["enemy"], self.groups["pickup"], self.groups["obstacles"]],
+            self.groups["player"]: [
+                self.groups["enemy"], self.groups["pickup"],
+                self.groups["obstacles"]
+            ],
             self.groups["enemy"]: [self.groups["obstacles"]],
-            self.groups["projectile"]: [self.groups["player"], self.groups["enemy"], self.groups["obstacles"]]
+            self.groups["projectile"]: [
+                self.groups["player"], self.groups["enemy"]
+            ]
         })
         self.groups["other"].extend([
-            heal_spawner, self.wave_manager, self.leveling, self.collision_manager, self.grid_manager
+            heal_spawner, self.wave_manager, self.leveling,
+            self.collision_manager, self.obstacles_manager
         ])
 
     def update(self):
@@ -169,10 +177,13 @@ class Game:
 
         for group in self.groups.values():
             try:
-                group.update(groups=self.groups, time_delta=self.time_delta)
+                group.update(time_delta=self.time_delta)
             except AttributeError:
                 for updateable in group:
-                    updateable.update(groups=self.groups, time_delta=self.time_delta)
+                    try:
+                        updateable.update(time_delta=self.time_delta)
+                    except AttributeError:
+                        pass
 
     def draw(self):
         """Draw sprites groups, if fails draw every element separately, if fails pass."""
