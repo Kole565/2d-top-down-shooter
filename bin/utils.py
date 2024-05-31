@@ -1,10 +1,10 @@
 """Provide various functions for different separeted in code tasks."""
 import pygame
 from pygame_gui.elements import UILabel
-import heapq
 import math
 import json
 import os
+from copy import copy
 
 
 class FPSMeter:
@@ -35,26 +35,6 @@ class FPSMeter:
         self.frames = self.frames[1:] + [value]
 
 
-class Node:
-
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.g = float("inf")
-        self.h = 0
-        self.f = float("inf")
-        self.parent = None
-
-    def __lt__(self, other):
-        return self.f < other.f
-
-    def __eq__(self, other):
-        return self.x == other.x and self.y == other.y
-
-    def __hash__(self):
-        return hash((self.x, self.y))
-
-
 def get_cfg(name):
     """Return config dict from dedicated folder."""
     cfg = json.load(open(os.path.join(
@@ -73,69 +53,55 @@ def get_image(filename):
     return image
 
 
-def a_star(start, end, obstacles, borders, cell_size=1):
+def a_star(start, end, obstacles, borders, cell_size=1, seen=None):
     """Return path from start to end through field filled with obstacles."""
-    start_node = Node(start[0], start[1])
-    start_node.g = 0
-    start_node.f = start_node.g + start_node.h
-    end_node = Node(end[0], end[1])
+    seen = [copy(start)]
+    return _a_star_rec(
+        start, end, obstacles, borders, seen, cell_size=cell_size
+    )
 
-    open_list = []
-    heapq.heappush(open_list, start_node)
 
-    closed_set = set()
+def _a_star_rec(start, end, obstacles, borders, seen, cell_size=1):
+    if start == end:
+        return seen
 
-    while open_list:
-        current_node = heapq.heappop(open_list)
+    to_explore = _get_valid_cells(start, seen, obstacles, borders, cell_size)
+    to_explore.sort(key=lambda x: math.dist(x, end))
 
-        if current_node == end_node:
-            path = []
-            while current_node is not None:
-                path.append((current_node.x, current_node.y))
-                current_node = current_node.parent
-            return path[::-1]  # Return the reversed path
+    if not to_explore:
+        return
 
-        closed_set.add(current_node)
+    for node in to_explore:
+        path = _a_star_rec(
+            node, end, obstacles, borders, copy(seen + [node]),
+            cell_size=cell_size
+        )
+        if path:
+            return path
 
-        neighbors = []
 
-        for dx in range(-1, 2):
-            for dy in range(-1, 2):
-                # Ignore the current node
-                if dx == 0 and dy == 0:
-                    continue
-                if dx != 0 and dy != 0:
-                    continue
+def _get_valid_cells(start, seen, obstacles, borders, cell_size=1):
+    cells = []
 
-                x = current_node.x + dx * cell_size
-                y = current_node.y + dy * cell_size
-
-                if x < 0 or x >= borders[0] or y < 0 or y >= borders[1]:
-                    continue
-
-                if [int(x), int(y)] in obstacles:
-                    continue
-
-                neighbor = Node(x, y)
-                neighbors.append(neighbor)
-
-        for neighbor in neighbors:
-            if neighbor in closed_set:
+    for dx in range(-1, 2):
+        for dy in range(-1, 2):
+            if dx == 0 and dy == 0:
+                continue
+            if dx != 0 and dy != 0:
                 continue
 
-            new_g = current_node.g + 1 * cell_size
+            next_cell = [start[0] + dx * cell_size, start[1] + dy * cell_size]
 
-            if neighbor in open_list:
-                if new_g < neighbor.g:
-                    neighbor.g = new_g
-                    neighbor.f = neighbor.g + neighbor.h
-                    neighbor.parent = current_node
-                    heapq.heapify(open_list)  # Re-heapify to maintain priority
-            else:
-                neighbor.g = new_g
-                neighbor.h = math.sqrt((end_node.x - neighbor.x) ** 2 + (end_node.y - neighbor.y) ** 2)
-                neighbor.f = neighbor.g + neighbor.h
-                neighbor.parent = current_node
-                heapq.heappush(open_list, neighbor)
+            if next_cell in seen:
+                continue
+            if (
+                next_cell[0] < 0 or next_cell[0] >= borders[0]
+                or next_cell[1] < 0 or next_cell[1] >= borders[1]
+            ):
+                continue
+            if next_cell in obstacles:
+                continue
 
-    return None
+            cells.append(next_cell)
+
+    return cells
