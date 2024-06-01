@@ -1,4 +1,5 @@
 import pygame
+import cProfile
 import time
 from pygame_gui.elements import UILabel
 
@@ -57,7 +58,9 @@ class Game:
         Explosion.images = [img, pygame.transform.flip(img, 1, 1)]
 
         if cfg["fullscreen"]:
-            self.screen = pygame.display.set_mode(self.SCREEN_SIZE, pygame.FULLSCREEN)
+            self.screen = pygame.display.set_mode(
+                self.SCREEN_SIZE, pygame.FULLSCREEN
+            )
         else:
             self.screen = pygame.display.set_mode(self.SCREEN_SIZE)
         self.ui_handler = UIHandler(get_cfg("ui"), self.screen)
@@ -73,7 +76,9 @@ class Game:
         if self.FPS_SHOW:
             self.fps_meter = FPSMeter(self.ui_handler)
         if self.TUTORIAL_SHOW:
-            self.tutorial = Tutorial(get_cfg("tutorial"), self.screen, self.ui_handler, self)
+            self.tutorial = Tutorial(
+                get_cfg("tutorial"), self.screen, self.ui_handler, self
+            )
 
         self.state = "prestarted"
 
@@ -111,8 +116,10 @@ class Game:
             field_size=self.SCREEN_SIZE
         )
         self.wave_manager = WaveManger(
-            cfg=get_cfg("waves"),
-            enemy_group=self.groups["enemy"], markers_group=self.groups["obstacles"], bullets_group=self.groups["projectile"], ui_handler=self.ui_handler,
+            cfg=get_cfg("waves"), enemy_group=self.groups["enemy"],
+            markers_group=self.groups["obstacles"],
+            bullets_group=self.groups["projectile"],
+            ui_handler=self.ui_handler,
             leveling=self.leveling, field_size=self.SCREEN_SIZE,
             player=self.player, obstacles_manager=self.obstacles_manager
         )
@@ -150,10 +157,16 @@ class Game:
     def update_events(self):
         """Handle events according to state."""
         for e in pygame.event.get():
-            if e.type == pygame.QUIT:
+            if (
+                e.type == pygame.QUIT
+                or (e.type == pygame.KEYDOWN and e.key == pygame.K_q)
+            ):
                 pygame.quit()
             if self.state == "prestarted":
-                if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE or not self.TUTORIAL_SHOW:
+                if (
+                    e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE
+                    or not self.TUTORIAL_SHOW
+                ):
                     if self.TUTORIAL_SHOW:
                         self.tutorial.close()
                     self.wave_manager.start()
@@ -171,7 +184,7 @@ class Game:
             self.ui_handler.process_events(e)
 
     def update_groups(self):
-        """Trying to update groups, if fails update every element separately."""
+        """Try to update groups, if fails try every element separately."""
         if self.state in ("prestarted", "lose", "paused", "end"):
             return
 
@@ -186,7 +199,7 @@ class Game:
                         pass
 
     def draw(self):
-        """Draw sprites groups, if fails draw every element separately, if fails pass."""
+        """Try to draw sprites, if fails try every element, else pass."""
         self.screen.fill(self.BACKGROUND_COLOR)
 
         if self.state == "lose":
@@ -216,7 +229,9 @@ class Game:
             )
             self.time_label = self.ui_handler.add(
                 "time_label", UILabel, ["center"],
-                text="Your time: {} s".format(round(time.time() - self.start_time, 2)),
+                text="Your time: {} s".format(
+                    round(time.time() - self.start_time, 2)
+                ),
                 class_id="@state_label"
             )
         elif self.state == "lose":

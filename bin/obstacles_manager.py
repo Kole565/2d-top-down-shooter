@@ -37,10 +37,8 @@ class ObstaclesManager:
 
     def get_obstacle_of_type(self, obj_type):
         """Filter and return obstacles by type."""
-        print("1. ObstaclesManager")
         filtered = [
             obj for obj in self.obstacles_group if isinstance(obj, obj_type)
         ]
-        print("2. ObstaclesManager", filtered)
-        print("3. ObstaclesManager", type(self.obstacles_group.sprites()[0]), obj_type, isinstance(self.obstacles_group.sprites()[0], obj_type))
+
         return filtered
