@@ -2,10 +2,11 @@
 import math
 import pygame
 
+from pygame_gui.elements import UIWorldSpaceHealthBar
+
+from bin.entity.marker import Marker
 from bin.entity.wall import Wall
 from bin.modules.moveable import Moveable
-from bin.entity.marker import Marker
-from pygame_gui.elements import UIWorldSpaceHealthBar
 from bin.utils import a_star
 
 
@@ -107,6 +108,9 @@ class Enemy(pygame.sprite.Sprite, Moveable):
             if math.dist(waypoint, [self.x, self.y]) < 0.3 * self.wall_size:
                 self.path.pop(0)
                 self.ignored_waypoint = waypoint[:]
+
+        waypoint[0] += (self.aim.radius - self.radius) / 2
+        waypoint[1] += (self.aim.radius - self.radius) / 2
 
         return waypoint
 

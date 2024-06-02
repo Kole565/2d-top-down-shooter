@@ -93,6 +93,7 @@ class Player(pygame.sprite.Sprite, Moveable):
             self.shooting,
             self.field_size,
             direction,
+            self.projectile_group,
             position
         )
         projectile.group = "player_projectile"

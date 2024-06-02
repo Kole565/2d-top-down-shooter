@@ -33,6 +33,7 @@ class Shooter(Enemy):
             self.shooting_cfg,
             self.field_size,
             direction,
+            self.bullets_group,
             [self.x + self.radius / 2, self.y + self.radius / 2]
         )
 

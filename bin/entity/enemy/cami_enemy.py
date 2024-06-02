@@ -1,20 +1,19 @@
 import pygame
 
 from .enemy import Enemy
-
-from ...explosion import Explosion
+from bin.explosion import Explosion
 
 
 class CamiEnemy(Enemy):
 
-    def check_collision(self, groups, *args, **kwargs):
-        collision = pygame.sprite.collide_circle(self, self.aim)
-        if not collision:
-            return
+    def on_collision(self, collisions):
+        super().on_collision(collisions)
 
-        self.aim.hit(self.damage)
+        for sprite in collisions:
+            if sprite.group == "player":
+                sprite.hit(self.damage)
 
-        e = Explosion(self)
-        groups["enemy"].add(e)
+                expl = Explosion(self)
+                self.group_for_markers.add(expl)
 
-        self.kill()
+                self.kill()

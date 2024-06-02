@@ -1,11 +1,12 @@
 import pygame
 
+from bin.explosion import Explosion
 from bin.modules.moveable import Moveable
 
 
 class Bullet(pygame.sprite.Sprite, Moveable):
 
-    def __init__(self, cfg, field_size, direction, spawn_pos=[0, 0]):
+    def __init__(self, cfg, field_size, direction, explosions_group, spawn_pos=[0, 0]):
         super().__init__()
         Moveable.init(self, spawn_pos)
 
@@ -27,6 +28,7 @@ class Bullet(pygame.sprite.Sprite, Moveable):
 
         self.field_size = field_size
         self.direction = direction
+        self.explosions_group = explosions_group
 
         self.collided_sprites = []
 
@@ -47,6 +49,9 @@ class Bullet(pygame.sprite.Sprite, Moveable):
                     self.piercing -= 1
                     self.damage *= self.piercing_mod
                 else:
+                    expl = Explosion(self)
+                    self.explosions_group.add(expl)
+
                     self.kill()
             elif sprite.group == "player" and self.group == "projectile":
                 sprite.hit(self.damage)
