@@ -1,15 +1,15 @@
 import pygame
-import cProfile
 import time
+
 from pygame_gui.elements import UILabel
 
 from bin.entity.player import Player
 
 from bin.collision_manager import CollisionManager
 from bin.explosion import Explosion
-from bin.obstacles_manager import ObstaclesManager
 from bin.heal import Heal
 from bin.leveling import Leveling
+from bin.obstacles_manager import ObstaclesManager
 from bin.spawner import Spawner
 from bin.tutorial import Tutorial
 from bin.ui_handler import UIHandler
@@ -71,6 +71,7 @@ class Game:
             "enemy": pygame.sprite.Group(),
             "projectile": pygame.sprite.Group(),
             "pickup": pygame.sprite.Group(),
+            "ui": pygame.sprite.Group(),
             "other": [],
         }
         if self.FPS_SHOW:
@@ -117,7 +118,7 @@ class Game:
         )
         self.wave_manager = WaveManger(
             cfg=get_cfg("waves"), enemy_group=self.groups["enemy"],
-            markers_group=self.groups["obstacles"],
+            markers_group=self.groups["ui"],
             bullets_group=self.groups["projectile"],
             ui_handler=self.ui_handler,
             leveling=self.leveling, field_size=self.SCREEN_SIZE,
@@ -130,9 +131,11 @@ class Game:
                 self.groups["enemy"], self.groups["pickup"],
                 self.groups["obstacles"]
             ],
-            self.groups["enemy"]: [self.groups["obstacles"]],
+            self.groups["enemy"]: [
+                self.groups["obstacles"], self.groups["player"],
+            ],
             self.groups["projectile"]: [
-                self.groups["player"], self.groups["enemy"]
+                self.groups["player"], self.groups["enemy"],
             ]
         })
         self.groups["other"].extend([
